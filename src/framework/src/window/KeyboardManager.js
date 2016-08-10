@@ -1,7 +1,8 @@
 (function(window) {
     'use strict';
 
-    var Key = function( ) {
+    var Key = function( )
+    {
         this.isPressed = false;
     };
 
@@ -9,10 +10,13 @@
 
         constructor: Key,
 
-        press: function() {
+        press: function()
+        {
             this.isPressed = true;
         },
-        release: function() {
+
+        release: function()
+        {
             this.isPressed = false;
         }
     };
@@ -37,30 +41,28 @@
     KeyboardManager.KEY_CODE_Q = 81;
     KeyboardManager.KEY_CODE_E = 69;
 
-    KeyboardManager.onKeyDown = function(event) {
-
+    KeyboardManager.onKeyDown = function(event)
+    {
         if(!KeyboardManager.keyMap.hasOwnProperty(event.keyCode))
         {
             KeyboardManager.keyMap[event.keyCode] = new Key();
-
         }
 
         KeyboardManager.keyMap[event.keyCode].press();
     };
 
-    KeyboardManager.onKeyUp = function(event) {
-
+    KeyboardManager.onKeyUp = function(event)
+    {
         if(!KeyboardManager.keyMap.hasOwnProperty(event.keyCode))
         {
             KeyboardManager.keyMap[event.keyCode] = new Key();
-
         }
 
         KeyboardManager.keyMap[event.keyCode].release();
     };
 
-    KeyboardManager.isKeyPressed = function(keyCode) {
-
+    KeyboardManager.isKeyPressed = function(keyCode)
+    {
         return KeyboardManager.keyMap[keyCode] != undefined && KeyboardManager.keyMap[keyCode].isPressed;
     };
 

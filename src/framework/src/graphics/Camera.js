@@ -1,8 +1,8 @@
 (function(window) {
     'use strict';
 
-    var Camera = function() {
-
+    var Camera = function()
+    {
         this.view = mat4.create();
 
         this.projection = mat4.create();
@@ -13,80 +13,133 @@
 
         this.up = vec3.create();
 
-        this.dummy = vec3.create();
+        this.dummyVec3 = vec3.create();
 
-        this.updateViewMatrix();
+        updateViewMatrix(this);
     };
 
     Camera.prototype = {
 
         constructor: Camera,
 
-        moveForward: function(amount) {
+        /**
+         *
+         * @param amount
+         */
+        moveForward: function(amount)
+        {
+            vec3.mul(this.dummyVec3, this.direction, [amount, amount, amount]);
 
-            vec3.mul(this.dummy, this.direction, [amount, amount, amount]);
+            vec3.add(this.position, this.position, this.dummyVec3);
 
-            vec3.add(this.position, this.position, this.dummy);
-
-            this.updateViewMatrix();
+            updateViewMatrix(this);
         },
-        moveUp: function(amount) {
 
-            vec3.mul(this.dummy, [0, -1, 0], [amount, amount, amount]);
+        /**
+         *
+         * @param amount
+         */
+        moveUp: function(amount)
+        {
+            vec3.mul(this.dummyVec3, [0, -1, 0], [amount, amount, amount]);
 
-            vec3.add(this.position, this.position, this.dummy);
+            vec3.add(this.position, this.position, this.dummyVec3);
 
-            this.updateViewMatrix();
+            updateViewMatrix(this);
         },
-        moveDown: function(amount) {
 
-            vec3.mul(this.dummy, [0, -1, 0], [amount, amount, amount]);
+        /**
+         *
+         * @param amount
+         */
+        moveDown: function(amount)
+        {
+            vec3.mul(this.dummyVec3, [0, -1, 0], [amount, amount, amount]);
 
-            vec3.sub(this.position, this.position, this.dummy);
+            vec3.sub(this.position, this.position, this.dummyVec3);
 
-            this.updateViewMatrix();
+            updateViewMatrix(this);
         },
-        moveBackward: function(amount) {
 
-            vec3.mul(this.dummy, this.direction, [amount, amount, amount]);
+        /**
+         *
+         * @param amount
+         */
+        moveBackward: function(amount)
+        {
+            vec3.mul(this.dummyVec3, this.direction, [amount, amount, amount]);
 
-            vec3.sub(this.position, this.position, this.dummy);
+            vec3.sub(this.position, this.position, this.dummyVec3);
 
-            this.updateViewMatrix();
+            updateViewMatrix(this);
         },
-        moveLeft: function(amount) {
-            vec3.cross(this.dummy, this.direction, [0, 1, 0]);
 
-            vec3.mul(this.dummy, this.dummy, [amount, amount, amount]);
+        /**
+         *
+         * @param amount
+         */
+        moveLeft: function(amount)
+        {
+            vec3.cross(this.dummyVec3, this.direction, [0, 1, 0]);
 
-            vec3.sub(this.position, this.position, this.dummy);
+            vec3.mul(this.dummyVec3, this.dummyVec3, [amount, amount, amount]);
 
-            this.updateViewMatrix();
+            vec3.sub(this.position, this.position, this.dummyVec3);
+
+            updateViewMatrix(this);
         },
-        moveRight: function(amount) {
-            vec3.cross(this.dummy, this.direction, [0, 1, 0]);
 
-            vec3.mul(this.dummy, this.dummy, [amount, amount, amount]);
+        /**
+         *
+         * @param amount
+         */
+        moveRight: function(amount)
+        {
+            vec3.cross(this.dummyVec3, this.direction, [0, 1, 0]);
 
-            vec3.add(this.position, this.position, this.dummy);
+            vec3.mul(this.dummyVec3, this.dummyVec3, [amount, amount, amount]);
 
-            this.updateViewMatrix();
+            vec3.add(this.position, this.position, this.dummyVec3);
+
+            updateViewMatrix(this);
         },
-        rotateLocalX: function(amount) {
+
+        /**
+         *
+         * @param amount
+         */
+        rotateLocalX: function(amount)
+        {
             vec3.rotateX(this.direction, this.direction, [0, 1, 0], amount)
         },
-        rotateLocalY: function(amount) {
+
+        /**
+         *
+         * @param amount
+         */
+        rotateLocalY: function(amount)
+        {
             vec3.rotateY(this.direction, this.direction, [0, 1, 0], amount)
         },
+
+        /**
+         *
+         * @param amount
+         */
         rotateLocalZ: function(amount) {
             vec3.rotateZ(this.direction, this.direction, [0, 1, 0], amount)
-        },
-        updateViewMatrix: function() {
-
-            mat4.lookAt(this.view, this.direction, [0,0,0], [0,1,0]);
-            mat4.translate(this.view, this.view, this.position);
         }
     };
+
+    /**
+     *
+     * @param camera
+     */
+    function updateViewMatrix(camera) {
+
+        mat4.lookAt(camera.view, camera.direction, [0,0,0], [0,1,0]);
+        mat4.translate(camera.view, camera.view, camera.position);
+    }
 
     window.Camera = Camera;
 

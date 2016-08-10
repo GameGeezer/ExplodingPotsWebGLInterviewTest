@@ -1,22 +1,28 @@
-/*
-    TODO delete vertex and fragment handles
- */
 (function(window) {
     'use strict';
 
-    var ShaderProgram = function(glContext, vertexShaderId, fragmentShaderId) {
+    var ShaderProgram = function(gl, vertexShaderSource, fragmentShaderSource)
+    {
+        this.gl = gl;
+        
+        this.shaderProgram = this.gl.createProgram();
+        
+        //  Compile the shaders
+        var vertexShader = this.loadShader(vertexShaderSource, this.gl.VERTEX_SHADER);
+        
+        var fragmentShader = this.loadShader(fragmentShaderSource, this.gl.FRAGMENT_SHADER);
 
-        this.shaderProgram = glContext.createProgram();
-        var vertexShaderSource = this.loadSourceFromId(vertexShaderId);
-        var fragmentShaderSource = this.loadSourceFromId(fragmentShaderId);
-        var vertexShader = this.loadShader(glContext, vertexShaderSource, glContext.VERTEX_SHADER);
-        var fragmentShader = this.loadShader(glContext, fragmentShaderSource, glContext.FRAGMENT_SHADER);
-        glContext.attachShader(this.shaderProgram , vertexShader);
-        glContext.attachShader(this.shaderProgram , fragmentShader);
-        glContext.linkProgram(this.shaderProgram);
+        //  Attach the shaders to the program
+        this.gl.attachShader(this.shaderProgram , vertexShader);
+        
+        this.gl.attachShader(this.shaderProgram , fragmentShader);
+        
+        this.gl.linkProgram(this.shaderProgram);
 
-        if (!glContext.getProgramParameter(this.shaderProgram, glContext.LINK_STATUS)) {
-            alert("Could not initialise shaders");
+        //  Throw an exception if the program fails to link
+        if (!this.gl.getProgramParameter(this.shaderProgram, this.gl.LINK_STATUS))
+        {
+            throw new Exception("Could not initialise shaders");
         }
     };
 
@@ -24,48 +30,40 @@
 
         constructor: ShaderProgram,
 
-        bind: function(glContext) {
-            glContext.useProgram(this.shaderProgram);
+        bind: function()
+        {
+            this.gl.useProgram(this.shaderProgram);
         },
-        unbind: function(glContext) {
-          //  glContext.useProgram(0);
-        },
-        getUniformLocation: function(glContext, uniformName) {
 
-            return glContext.getUniformLocation(this.shaderProgram , uniformName);
+        getUniformLocation: function(uniformName)
+        {
+            return this.gl.getUniformLocation(this.shaderProgram , uniformName);
         },
-        getAttributeLocation: function(glContext, attributeName) {
-            var attributeLocation = glContext.getAttribLocation(this.shaderProgram , attributeName);
-            glContext.enableVertexAttribArray(attributeLocation);
+
+        getAttributeLocation: function(attributeName)
+        {
+            var attributeLocation = this.gl.getAttribLocation(this.shaderProgram , attributeName);
+
+            this.gl.enableVertexAttribArray(attributeLocation);
 
             return attributeLocation;
         },
-        loadSourceFromId: function(id) {
-            var shaderScript = document.getElementById(id);
-            if (!shaderScript) {
-                return null;
-            }
 
-            var str = "";
-            var k = shaderScript.firstChild;
-            while (k) {
-                if (k.nodeType == 3)
-                    str += k.textContent;
-                k = k.nextSibling;
-            }
+        loadShader: function(shaderSource, shaderType)
+        {
+            //  Create shader of type, i.e vertex, fragment
+            var shader = this.gl.createShader(shaderType);
 
-            return str;
-        },
-        loadShader: function(glContext, shaderSource, shaderType) {
+            //  Link the source code for the shader
+            this.gl.shaderSource(shader, shaderSource);
 
-            var shader = glContext.createShader(shaderType);
+            //  Compile the linked source
+            this.gl.compileShader(shader);
 
-            glContext.shaderSource(shader, shaderSource);
-            glContext.compileShader(shader);
-
-            if (!glContext.getShaderParameter(shader, glContext.COMPILE_STATUS)) {
-                alert(glContext.getShaderInfoLog(shader));
-                return null;
+            //  Throw an exception if the shader fails to compile
+            if (!this.gl.getShaderParameter(shader, this.gl.COMPILE_STATUS))
+            {
+                throw new Exception(this.gl.getShaderInfoLog(shader));
             }
 
             return shader;
@@ -75,3 +73,51 @@
     window.ShaderProgram = ShaderProgram;
 
 })(window);
+
+/*
+
+ var ShaderProgram = function(gl, vertexShaderId, fragmentShaderId)
+ {
+
+ };
+
+ ShaderProgram.prototype = {
+
+ constructor: ShaderProgram,
+
+ bind: function()
+ {
+
+ },
+
+ getUniformLocation: function(uniformName)
+ {
+
+ },
+
+ getAttributeLocation: function(attributeName)
+ {
+
+ },
+
+ loadSourceFromId: function(id)
+ {
+ var shaderScript = document.getElementById(id);
+ if (!shaderScript) {
+ return null;
+ }
+
+ var str = "";
+ var k = shaderScript.firstChild;
+ while (k) {
+ if (k.nodeType == 3)
+ str += k.textContent;
+ k = k.nextSibling;
+ }
+
+ return str;
+ },
+
+
+ };
+ */

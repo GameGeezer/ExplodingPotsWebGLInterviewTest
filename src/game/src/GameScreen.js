@@ -13,10 +13,17 @@
     GameScreen.prototype.onCreate = function() {
 
         this.player = new Player();
-        this.contextGL = this.game.application.contextGL;
+        this.gl = this.game.application.gl;
         this.currentShader = window.currentShader;
-        this.shaderProgram1 = new ShaderProgram(this.contextGL, "shader-vs", "shader-fs");
-        this.shaderProgram2 = new ShaderProgram(this.contextGL, "shader-vs-2", "shader-fs");
+        //  Load the raw text
+        var vertexShaderSource = FileUtil.loadTextFromId("shader-vs");
+
+        var vertexShader2Source = FileUtil.loadTextFromId("shader-vs-2");
+
+        var fragmentShaderSource = FileUtil.loadTextFromId("shader-fs");
+
+        this.shaderProgram1 = new ShaderProgram(this.gl, vertexShaderSource, fragmentShaderSource);
+        this.shaderProgram2 = new ShaderProgram(this.gl, vertexShader2Source, fragmentShaderSource);
         this.usingShaderProgram = this.shaderProgram1;
 
 
@@ -24,18 +31,81 @@
 
         this.teapotResolutions = [];
 
+
+        var testBuilder = new GeometryBuilder();
+        testBuilder.createComponent(0, 3);
+        testBuilder.createComponent(1, 3);
+        testBuilder.setDataAtComponent(0, window.loadedMeshes["teapot1"].vertices);
+        testBuilder.setDataAtComponent(1, window.loadedMeshes["teapot1"].vertexNormals);
+        testBuilder.setIndices(window.loadedMeshes["teapot1"].indices);
+        var teapot1 = testBuilder.build();
+        testBuilder.reset();
+        testBuilder.createComponent(0, 3);
+        testBuilder.createComponent(1, 3);
+        testBuilder.setDataAtComponent(0, window.loadedMeshes["teapot2"].vertices);
+        testBuilder.setDataAtComponent(1, window.loadedMeshes["teapot2"].vertexNormals);
+        testBuilder.setIndices(window.loadedMeshes["teapot2"].indices);
+        var teapot2 = testBuilder.build();
+        var testBuilder = new GeometryBuilder();
+        testBuilder.createComponent(0, 3);
+        testBuilder.createComponent(1, 3);
+        testBuilder.setDataAtComponent(0, window.loadedMeshes["teapot1"].vertices);
+        testBuilder.setDataAtComponent(1, window.loadedMeshes["teapot1"].vertexNormals);
+        testBuilder.setIndices(window.loadedMeshes["teapot1"].indices);
+        var teapot1 = testBuilder.build();
+        testBuilder.reset();
+        testBuilder.createComponent(0, 3);
+        testBuilder.createComponent(1, 3);
+        testBuilder.setDataAtComponent(0, window.loadedMeshes["teapot2"].vertices);
+        testBuilder.setDataAtComponent(1, window.loadedMeshes["teapot2"].vertexNormals);
+        testBuilder.setIndices(window.loadedMeshes["teapot2"].indices);
+        var teapot2 = testBuilder.build();
+        testBuilder.reset();
+        testBuilder.createComponent(0, 3);
+        testBuilder.createComponent(1, 3);
+        testBuilder.setDataAtComponent(0, window.loadedMeshes["teapot3"].vertices);
+        testBuilder.setDataAtComponent(1, window.loadedMeshes["teapot3"].vertexNormals);
+        testBuilder.setIndices(window.loadedMeshes["teapot3"].indices);
+        var teapot3 = testBuilder.build();
+        testBuilder.reset();
+        testBuilder.createComponent(0, 3);
+        testBuilder.createComponent(1, 3);
+        testBuilder.setDataAtComponent(0, window.loadedMeshes["teapot4"].vertices);
+        testBuilder.setDataAtComponent(1, window.loadedMeshes["teapot4"].vertexNormals);
+        testBuilder.setIndices(window.loadedMeshes["teapot4"].indices);
+        var teapot4 = testBuilder.build();
+        testBuilder.reset();
+        testBuilder.createComponent(0, 3);
+        testBuilder.createComponent(1, 3);
+        testBuilder.setDataAtComponent(0, window.loadedMeshes["teapot5"].vertices);
+        testBuilder.setDataAtComponent(1, window.loadedMeshes["teapot5"].vertexNormals);
+        testBuilder.setIndices(window.loadedMeshes["teapot5"].indices);
+        var teapot5 = testBuilder.build();
+
+        this.teapotList = [];
+        this.teapotList[0] = new Mesh();
+        this.teapotList[1] = new Mesh();
+        this.teapotList[2] = new Mesh();
+        this.teapotList[3] = new Mesh();
+        this.teapotList[4] = new Mesh();
+        this.testMeshFamily = new MeshFamily(this.gl);
+        this.testMeshFamily.addToFamily(teapot1, this.teapotList[0]);
+        this.testMeshFamily.addToFamily(teapot2, this.teapotList[1]);
+        this.testMeshFamily.addToFamily(teapot3, this.teapotList[2]);
+        this.testMeshFamily.addToFamily(teapot4, this.teapotList[3]);
+        this.testMeshFamily.addToFamily(teapot5, this.teapotList[4]);
+
+
+        this.testMeshFamily.addAttribute(0, 3);
+        this.testMeshFamily.addAttribute(1, 3);
+        this.testMeshFamily.createFamily();
+
         for(var i = 1; i < 6; ++i) {
 
-            var renderMesh = new RenderMesh(this.contextGL,  window.loadedMeshes["teapot" + i], this.usingShaderProgram, "uModelMatrix", "aVertexPosition", "aVertexNormal");
+            var renderMesh = new RenderMesh(this.gl, window.loadedMeshes["teapot" + i].vertices, window.loadedMeshes["teapot" + i].vertexNormals, window.loadedMeshes["teapot" + i].indices, this.usingShaderProgram, "uModelMatrix", "aVertexPosition", "aVertexNormal");
             renderMesh.setScale(0.01, 0.01, 0.01);
             this.teapotResolutions[i] = renderMesh;
         }
-
-        this.cubeMesh = new RenderMesh(this.contextGL,  window.loadedMeshes["cubeObj"], this.usingShaderProgram, "uModelMatrix", "aVertexPosition", "aVertexNormal");
-        this.collisionSphere = new CollisionSphere([0,0,0], 1);
-        this.explodingMesh = new ExplodingMesh(this.contextGL,this.teapotResolutions[5], this.cubeMesh);
-        this.timeSinceExplosion = 0;
-        this.dontRenderIndex = -1;
     };
 
     GameScreen.prototype.onUpdate = function(delta) {
@@ -47,76 +117,51 @@
         }
         this.currentShader = window.currentShader;
         this.player.update();
-        this.explodingMesh.update();
-
-        if(this.exploded) {
-            this.explodingMesh.expand();
-            this.timeSinceExplosion += delta;
-
-            if(this.timeSinceExplosion > 1000) {
-                this.timeSinceExplosion = 0;
-                this.exploded = false;
-                this.explodingMesh.reset();
-                this.dontRenderIndex = -1;
-            }
-        }
-
-
-        var downX = 0;// -(MouseManager.leftButton.pressedX - 400) / 400;
-        var downY = 0// -(MouseManager.leftButton.pressedY - 450) / 450;
-        var testIntersectPosition = [-this.player.camera.position[0] + downX, -this.player.camera.position[1] + downY, this.player.camera.position[2]];
-        console.log(downX);
-
-        var teapotCount = $('#numberOfTeapots').val();
-        for(var i = 0; i < teapotCount; ++i)
-        {
-            
-            var x = i % 7;
-            var y = Math.floor(i / 7);
-            this.collisionSphere.center = [-5 + 1.5 * x, -5 + (1.5 * y), -10.0];
-
-            if(MouseManager.leftButton.isPressed && !this.exploded && this.collisionSphere.intersectsRay(testIntersectPosition, [0, 0, -1])) {
-                this.exploded = true;
-                this.explodingMesh.setTranslation(-5 + 1.5 * x, -5 + (1.5 * y), -10.0);
-                this.explodingMesh.explode();
-                this.dontRenderIndex = i;
-            }
-        }
-        
-
     };
 
     GameScreen.prototype.onRender = function(delta) {
 
-        mat4.perspective(this.projectionMatrix, 45, this.contextGL.viewportWidth / this.contextGL.viewportHeight, 0.1, 100.0);
+        mat4.perspective(this.projectionMatrix, 45, this.gl.viewportWidth / this.gl.viewportHeight, 0.1, 100.0);
 
-        this.usingShaderProgram.bind(this.contextGL);
+        this.usingShaderProgram.bind();
 
-        var projectionMatrixUniform = this.usingShaderProgram.getUniformLocation(this.contextGL, "uProjectionMatrix");
-        var viewMatrixUniform = this.usingShaderProgram.getUniformLocation(this.contextGL, "uViewMatrix");
-        this.contextGL.uniformMatrix4fv(projectionMatrixUniform, false, this.projectionMatrix);
-        this.contextGL.uniformMatrix4fv(viewMatrixUniform, false, this.player.getView());
+        var modelMatrixUniform = this.usingShaderProgram.getUniformLocation("uModelMatrix");
+        var projectionMatrixUniform = this.usingShaderProgram.getUniformLocation("uProjectionMatrix");
+        var viewMatrixUniform = this.usingShaderProgram.getUniformLocation("uViewMatrix");
+        this.gl.uniformMatrix4fv(projectionMatrixUniform, false, this.projectionMatrix);
+        this.gl.uniformMatrix4fv(viewMatrixUniform, false, this.player.getView());
 
+        var tm = mat4.create();
+
+        this.testMeshFamily.bind();
+        mat4.identity(tm);
+        mat4.translate(tm, tm, [0, 0, -10]);
+        mat4.scale(tm, tm, [0.01, 0.01, 0.01]);
+        this.gl.uniformMatrix4fv(modelMatrixUniform, false, tm);
+        this.teapotList[0].render(this.gl)
+        mat4.identity(tm);
+        mat4.translate(tm, tm, [5, 0, -10]);
+        mat4.scale(tm, tm, [0.01, 0.01, 0.01]);
+        this.gl.uniformMatrix4fv(modelMatrixUniform, false, tm);
+        this.teapotList[1].render(this.gl)
         //mat4.translate(this.mvMatrix, this.mvMatrix, [3.0, 0.0, 0.0]);
 
         var teapotCount = $('#numberOfTeapots').val();
         var teapotRes = $('#teapotResolution').val();
-        this.teapotResolutions[teapotRes].bind(this.contextGL);
+    //    this.teapotResolutions[teapotRes].bind(this.gl);
         for(var i = 0; i < teapotCount; ++i)
         {
-            if(this.dontRenderIndex == i) {
-                continue;
-            }
             var x = i % 7;
             var y = Math.floor(i / 7)
-            this.teapotResolutions[teapotRes].setTranslation(-5 + 1.5 * x, -5 + (1.5 * y), -10.0);
-            this.teapotResolutions[teapotRes].render(this.contextGL);
+            mat4.identity(tm);
+            mat4.translate(tm, tm, [-5 + 1.5 * x, -5 + (1.5 * y), -10.0]);
+            mat4.scale(tm, tm, [0.01, 0.01, 0.01]);
+            this.gl.uniformMatrix4fv(modelMatrixUniform, false, tm);
+            this.teapotList[teapotRes].render(this.gl)
+          //  this.teapotResolutions[teapotRes].setTranslation(-5 + 1.5 * x, -5 + (1.5 * y), -10.0);
+           // this.teapotResolutions[teapotRes].render(this.gl);
         }
-        if(this.exploded) {
-            this.explodingMesh.render();
-        }
-
-        this.usingShaderProgram.unbind(this.contextGL);
+       // this.usingShaderProgram.unbind(this.gl);
     };
 
     GameScreen.prototype.onPause = function( ) {
@@ -138,10 +183,9 @@
         else {
             this.usingShaderProgram = this.shaderProgram2;
         }
-        this.cubeMesh.setShader(this.contextGL, this.usingShaderProgram, "uModelMatrix", "aVertexPosition", "aVertexNormal");
         for(var i = 1; i < this.teapotResolutions.length - 1; ++ i)
         {
-            this.teapotResolutions[i].setShader(this.contextGL, this.usingShaderProgram, "uModelMatrix", "aVertexPosition", "aVertexNormal");
+            this.teapotResolutions[i].setShader(this.gl, this.usingShaderProgram, "uModelMatrix", "aVertexPosition", "aVertexNormal");
 
         }
 
@@ -149,3 +193,28 @@
 
     window.GameScreen = GameScreen;
 })(window);
+
+/*
+
+ this.teapotResolutions = [];
+
+
+
+ this.cubeMesh = new Mesh();
+ this.teapotResolutions[0] = new Mesh();
+ this.teapotResolutions[1] = new Mesh();
+ this.teapotResolutions[2] = new Mesh();
+ this.teapotResolutions[3] = new Mesh();
+ this.teapotResolutions[4] = new Mesh();
+ this.testMeshFamily = new MeshFamily(this.gl);
+ this.testMeshFamily.addToFamily(teapot1, this.teapotResolutions[0]);
+ this.testMeshFamily.addToFamily(teapot2, this.teapotResolutions[1]);
+ this.testMeshFamily.addToFamily(teapot3, this.teapotResolutions[2]);
+ this.testMeshFamily.addToFamily(teapot4, this.teapotResolutions[3]);
+ this.testMeshFamily.addToFamily(teapot5, this.teapotResolutions[4]);
+
+
+ this.testMeshFamily.addAttribute(0, 3);
+ this.testMeshFamily.addAttribute(1, 3);
+ this.testMeshFamily.createFamily();
+ */

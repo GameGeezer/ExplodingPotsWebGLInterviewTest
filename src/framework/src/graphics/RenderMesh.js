@@ -5,18 +5,29 @@
 (function(window) {
     'use strict';
 
-    var RenderMesh = function(glContext, mesh, shaderProgram, modelUniformName, vertexAttributeName, normalAttributeName) {
-        // Load the mesh and initialize the buffers
-        this.mesh = mesh;
-        OBJ.initMeshBuffers(glContext, this.mesh);
-        this.vertexBuffer = this.mesh.vertexBuffer;
-        this.vertexBufferSize = this.mesh.vertexBuffer.itemSize;
-        this.normalBuffer = this.mesh.normalBuffer;
-        this.normalBufferSize = this.mesh.normalBuffer.itemSize;
-        this.indexBuffer = this.mesh.indexBuffer;
-        this.indexBufferSize = this.mesh.indexBuffer.numItems;
+    var RenderMesh = function(glContext, vertices, normals, indices, shaderProgram, modelUniformName, vertexAttributeName, normalAttributeName) {
+        //  OBJ.initMeshBuffers(glContext, this.mesh);
+        var builder = new GeometryBuilder();
+        builder.createComponent(0, 3);
+        builder.createComponent(1, 3);
+        builder.setDataAtComponent(0, vertices);
+        builder.setDataAtComponent(1, normals);
+        builder.setIndices(indices);
 
+        this.geometry = builder.build();
+        this.vertexBuffer = new VBO(glContext);
 
+        this.vertexBuffer.bind()
+        this.vertexBuffer.initializeEmpty(this.geometry.vertexData.length * 4, glContext.STATIC_DRAW);
+        this.vertexBuffer.bufferSubData(0, this.geometry.vertexData);
+
+        this.indexBuffer = new IBO(glContext, glContext.UNSIGNED_INT);
+        this.indexBuffer.bind();
+        this.indexBuffer.initializeEmpty(this.geometry.indices.length, glContext.STATIC_DRAW);
+        this.indexBuffer.bufferSubData(0, this.geometry.indices);
+
+        this.indexBufferSize = this.geometry.indices.length;
+        
         //  Find attributes required for the shader
         this.setShader(glContext, shaderProgram, modelUniformName, vertexAttributeName, normalAttributeName);
 
@@ -31,23 +42,25 @@
 
         bind: function(glContext) {
             //  Bind the vertices
-            glContext.bindBuffer(glContext.ARRAY_BUFFER, this.vertexBuffer);
-            glContext.vertexAttribPointer(this.positionAttributeLocation, this.vertexBufferSize, glContext.FLOAT, false, 0, 0);
-            //  Bind the normals
-            glContext.bindBuffer(glContext.ARRAY_BUFFER, this.normalBuffer);
-            glContext.vertexAttribPointer(this.normalAttributeLocation, this.normalBufferSize, glContext.FLOAT, false, 0, 0);
+            this.vertexBuffer.bind();
+
             //  Bind the indices
-            glContext.bindBuffer(glContext.ELEMENT_ARRAY_BUFFER, this.indexBuffer);
+            this.indexBuffer.bind();
+
+            glContext.vertexAttribPointer(this.positionAttributeLocation, 3, glContext.FLOAT, false, 24, 0);
+
+            glContext.vertexAttribPointer(this.normalAttributeLocation, 3, glContext.FLOAT, false, 24, 12);
+
         },
         render: function(glContext) {
             glContext.uniformMatrix4fv(this.modelUniformLocation, false, this.modelMatrix);
 
-            glContext.drawElements(glContext.TRIANGLES, this.indexBufferSize, glContext.UNSIGNED_SHORT, 0);
+            glContext.drawElements(glContext.TRIANGLES, this.indexBufferSize, glContext.UNSIGNED_INT, 0);
         },
         setShader: function(glContext, shaderProgram, modelUniformName, vertexAttributeName, normalAttributeName) {
-            this.modelUniformLocation = shaderProgram.getUniformLocation(glContext, modelUniformName);
-            this.positionAttributeLocation = shaderProgram.getAttributeLocation(glContext, vertexAttributeName);
-            this.normalAttributeLocation = shaderProgram.getAttributeLocation(glContext, normalAttributeName);
+            this.modelUniformLocation = shaderProgram.getUniformLocation(modelUniformName);
+            this.positionAttributeLocation = shaderProgram.getAttributeLocation(vertexAttributeName);
+            this.normalAttributeLocation = shaderProgram.getAttributeLocation(normalAttributeName);
         },
         translate: function(x, y, z) {
             vec3.add(this.position, this.position, [x, y, z]);

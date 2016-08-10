@@ -1,8 +1,8 @@
 (function(window) {
     'use strict';
 
-    var Screen = function() {
-
+    var Screen = function()
+    {
         this.created = false;
     };
 
@@ -10,28 +10,33 @@
 
         constructor: Screen,
 
-        onCreate: function() {
-
+        onCreate: function()
+        {
             throw new UnimplementedFunctionException('onCreate');
         },
-        onUpdate: function(delta) {
-
+        
+        onUpdate: function(delta)
+        {
             throw new UnimplementedFunctionException('onUpdate');
         },
-        onRender: function(delta) {
-
+        
+        onRender: function(delta)
+        {
             throw new UnimplementedFunctionException('onRender');
         },
-        onPause: function() {
-
+        
+        onPause: function()
+        {
             throw new UnimplementedFunctionException('onPause');
         },
-        onLeave: function() {
-
+        
+        onLeave: function()
+        {
             throw new UnimplementedFunctionException('onLeave');
         },
-        onResume: function() {
-
+        
+        onResume: function()
+        {
             throw new UnimplementedFunctionException('onResume');
         }
     };
