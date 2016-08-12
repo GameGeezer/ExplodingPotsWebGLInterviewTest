@@ -1,8 +1,9 @@
-(function(window) {
+(function (window)
+{
     'use strict';
 
-    var Game = function(screen, id) {
-
+    var Game = function (screen, id)
+    {
         this.screenMap = [];
 
         this.created = false;
@@ -14,43 +15,53 @@
 
     Game.prototype = {
 
-        constructor: Game,
+        constructor : Game,
 
-        create: function () {
+        create : function ()
+        {
+            this.currentScreen .onCreate();
 
-            for(var screen in this.screenMap)
-            {
-                this.screenMap[screen].onCreate();
-            }
+            this.currentScreen.created = true;
 
             this.created = true;
 
             this.currentScreen.onResume();
         },
-        update: function (delta) {
-
+        
+        update : function (delta)
+        {
             this.currentScreen.onUpdate(delta);
         },
-        render: function (delta) {
-
+        
+        render : function (delta)
+        {
             this.currentScreen.onRender(delta);
         },
-        addScreen: function (screen, screenID) {
-            
+        
+        addScreen : function (screen, screenID)
+        {
             screen.game = this;
 
-            if(this.created)
+            if (this.created)
             {
                 screen.onCreate();
             }
 
             this.screenMap[screenID] = screen;
         },
-        changeScreens: function (screenID) {
-
-            if (!this.screenMap.hasOwnProperty(screenID)) {
-
+        
+        changeScreens : function (screenID)
+        {
+            if (!this.screenMap.hasOwnProperty(screenID))
+            {
                 throw new UndefinedReferenceException(screenID);
+            }
+
+            if(!this.screenMap[screenID].created)
+            {
+                this.screenMap[screenID].onCreate();
+
+                this.screenMap[screenID].created = true;
             }
 
             this.currentScreen.onLeave();

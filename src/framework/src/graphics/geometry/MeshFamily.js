@@ -1,13 +1,20 @@
-(function(window) {
+(function (window)
+{
     'use strict';
 
+    var uniqueId = 0;
     /**
      * To avoid needless buffer binds it can be efficient to store the vertex data of multiple meshed in
      * a single buffer. When rendering, bind the family once and then make all draw calls for meshes associated with
      * the family. Every mesh in a mesh family needs to have their vertices stored in the same format.
      * @constructor
      */
-    var MeshFamily = function(gl) {
+    var MeshFamily = function (gl)
+    {
+        this.uniqueId = uniqueId;
+
+        ++uniqueId;
+
         this.gl = gl;
         //  Objects containing raw vertex and index data
         this.geometryList = [];
@@ -27,41 +34,43 @@
 
     MeshFamily.prototype = {
 
-        constructor: MeshFamily,
+        constructor : MeshFamily,
 
         /**
          * Binds the vertex and index buffer to device memory and sets up the vertex attribute pointers
          * @param gl
          */
-        bind: function()
+        bind : function ()
         {
             this.vertexBuffer.bind();
 
             this.indexBuffer.bind();
 
-            for(var i = 0; i < this.attributeLocations.length; ++i)
+            for (var i = 0; i < this.attributeLocations.length; ++i)
             {
+                this.gl.enableVertexAttribArray(this.attributeLocations[i]);
+
                 this.gl.vertexAttribPointer(this.attributeLocations[i], this.attributeSizes[i], this.gl.FLOAT, false, this.strideSize, this.attributeOffsets[i]);
             }
         },
 
         /**
-         * 
+         *
          * @param gl
          */
-        unbind: function()
+        unbind : function ()
         {
             this.vertexBuffer.unbind();
 
             this.indexBuffer.unbind();
 
-            for(var i = 0; i < this.attributeLocations.length; ++i)
+            for (var i = 0; i < this.attributeLocations.length; ++i)
             {
                 this.gl.disableVertexAttribArray(this.attributeLocations[i]);
             }
         },
 
-        destroy: function()
+        destroy : function ()
         {
             this.vertexBuffer.destroy();
 
@@ -73,7 +82,7 @@
          * @param geometry - Contains locally buffered vertex and index data
          * @param out_mesh - Once 'createFamily' is called, out_mesh will contain geometry's location in device memory
          */
-        addToFamily: function(geometry, out_mesh)
+        addToFamily : function (geometry, out_mesh)
         {
             this.geometryList.push(geometry);
 
@@ -85,9 +94,9 @@
          * @param gl
          * @post Local family references will be purged in case they should be garbage collected
          */
-        createFamily: function()
+        createFamily : function ()
         {
-            if(this.initialized)
+            if (this.initialized)
             {
                 return;
             }
@@ -96,7 +105,7 @@
 
             var indexBufferElementCount = 0;
 
-            for(var i = 0; i < this.geometryList.length; ++i)
+            for (var i = 0; i < this.geometryList.length; ++i)
             {
                 vertexBufferElementCount += this.geometryList[i].vertexData.length;
 
@@ -117,9 +126,9 @@
 
             var dummy = 0;
             //  Create a mesh for each geometry
-            for(var i = 0; i < this.geometryList.length; ++i)
+            for (var i = 0; i < this.geometryList.length; ++i)
             {
-                this.meshList[i].set(dummy, this.geometryList[i].indices.length, this.indexBuffer.glElementSize);
+                this.meshList[i].set(dummy, this.geometryList[i].indices.length, this.indexBuffer.glElementSize, this);
 
                 //  Acting as the current offset into the index buffer
                 dummy += this.geometryList[i].indices.length * this.indexBuffer.bytesPerElement;
@@ -131,7 +140,7 @@
 
             var vertexElementOffset = 0;
 
-            for(var i = 0; i < this.geometryList.length; ++i)
+            for (var i = 0; i < this.geometryList.length; ++i)
             {
                 //  Copy the geometry's data to the buffers
                 this.vertexBuffer.bufferSubData(vertexBufferOffset, this.geometryList[i].vertexData);
@@ -139,11 +148,11 @@
 
                 var indicesToCopy = this.geometryList[i].indices;
 
-                if(i !== 0)
+                if (i !== 0)
                 {
                     indicesToCopy = this.geometryList[i].indices.slice(0);
-                    
-                    for(var j = 0; j < indicesToCopy.length; ++j)
+
+                    for (var j = 0; j < indicesToCopy.length; ++j)
                     {
                         indicesToCopy[j] += vertexElementOffset;
                     }
@@ -175,7 +184,7 @@
          * @param location - The shader index of the attribute
          * @param size - The number of bytes for this attribute
          */
-        addAttribute: function(location, size)
+        addAttribute : function (location, size)
         {
             this.attributeLocations.push(location);
 

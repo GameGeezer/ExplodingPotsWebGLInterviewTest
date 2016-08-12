@@ -1,7 +1,8 @@
-(function(window) {
+(function (window)
+{
     'use strict';
 
-    var Application = function(game, width, height, canvas)
+    var Application = function (game, width, height, canvas)
     {
         this.isAlive = true;
 
@@ -11,7 +12,8 @@
         this.gl = canvas.getContext("webgl") || canvas.getContext("experimental-webgl");
 
         // Assert that the context has been created
-        if (!this.gl) {
+        if (!this.gl)
+        {
             throw new Exception("Unable to initialize WebGL. Your browser may not support it.");
         }
 
@@ -32,42 +34,52 @@
         this.game.application = this;
 
         this.game.create();
+
+        this.stats = new Stats();
+
+
+        this.stats.showPanel(1);
+        document.body.appendChild(this.stats.dom);
     };
 
     Application.prototype = {
 
-        constructor: Application,
+        constructor : Application,
 
-        performGameLoop: function()
+        performGameLoop : function ()
         {
+            this.stats.begin();
+
             this.gl.viewport(0, 0, this.gl.viewportWidth, this.gl.viewportHeight);
-            
+
             //  Clear the color and depth buffers
             this.gl.clear(this.gl.COLOR_BUFFER_BIT | this.gl.DEPTH_BUFFER_BIT);
-            
+
             //  Grab the current time
             var currentTime = Date.now();
-            
+
             //  Find the frame delta
             var delta = currentTime - this.previousTime;
-            
+
             //  Update the scene
             this.game.update(delta);
-            
+
             //  Render the scene
             this.game.render(delta);
-            
+
             //  The previous frame time is now the current
             this.previousTime = currentTime;
-            
+
+            this.stats.end();
+
             //  If a close hasn't been requested then perform another loop
-            if(this.isAlive)
+            if (this.isAlive)
             {
                 requestAnimationFrame(this.performGameLoop.bind(this));
             }
         },
 
-        close: function()
+        close : function ()
         {
             this.isAlive = false;
         }

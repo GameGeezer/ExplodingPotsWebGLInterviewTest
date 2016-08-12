@@ -1,13 +1,16 @@
-(function(window) {
+(function (window)
+{
     'use strict';
 
-    function HitTest(t, hit, normal) {
+    function HitTest(t, hit, normal)
+    {
         this.t = arguments.length ? t : Number.MAX_VALUE;
         this.hit = hit;
         this.normal = normal;
     }
 
-    var CollisionSphere = function(center, radius) {
+    var CollisionSphere = function (center, radius)
+    {
 
         this.center = center;
         this.radius = radius;
@@ -15,9 +18,10 @@
 
     CollisionSphere.prototype = {
 
-        constructor: CollisionSphere,
+        constructor : CollisionSphere,
 
-        intersectsRay: function (origin, direction) {
+        intersectsRay : function (origin, direction)
+        {
 
             var offset = vec3.create();
             vec3.subtract(offset, origin, this.center);
@@ -26,7 +30,8 @@
             var c = vec3.dot(offset, offset) - this.radius * this.radius;
             var discriminant = b * b - 4 * a * c;
 
-            if (discriminant > 0) {
+            if (discriminant > 0)
+            {
                 var t = (-b - Math.sqrt(discriminant)) / (2 * a);
                 var hit = vec3.create();
                 var scalar = vec3.create();

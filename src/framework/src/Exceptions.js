@@ -1,4 +1,5 @@
-function UnimplementedFunctionException(name) {
+function UnimplementedFunctionException(name)
+{
     'use strict';
     return 'Function \'' + name + '\' has not been implemented.';
 }
@@ -8,22 +9,26 @@ function UnimplementedFunctionException(name) {
  * @param {type} name
  * @returns {String}
  */
-function AlreadyInitilizedException(name) {
+function AlreadyInitilizedException(name)
+{
     'use strict';
     return name + ' has already been initialized.';
 }
 
-function Exception(error) {
+function Exception(error)
+{
     'use strict';
     return error;
 }
 
-function IOException(error) {
+function IOException(error)
+{
     'use strict';
     return error;
 }
 
-function UndefinedReferenceException(name) {
+function UndefinedReferenceException(name)
+{
     'use strict';
     return 'Object reference \'' + name + '\' is undefined';
 }

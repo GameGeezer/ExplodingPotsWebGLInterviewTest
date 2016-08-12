@@ -1,16 +1,18 @@
-(function(window) {
+(function (window)
+{
     'use strict';
 
     /**
      *  A VBO(Vertex Buffer Object) is used to store float vertex data
-     *  
+     *
      * @param gl - The webGL context
      * @constructor
      */
-    var VBO = function(gl) {
+    var VBO = function (gl)
+    {
         //  Hold on to the gl context
         this.gl = gl;
-        
+
         //  Allocate a buffer and store the handle
         this.handle = gl.createBuffer();
 
@@ -19,11 +21,11 @@
 
     VBO.prototype = {
 
-        constructor: VBO,
+        constructor : VBO,
 
-        initializeBuffer: function(vertices, usage)
+        initializeBuffer : function (vertices, usage)
         {
-            if(this.initialized)
+            if (this.initialized)
             {
                 throw new Exception("VBO already initialized");
             }
@@ -33,9 +35,9 @@
             this.initialized = true;
         },
 
-        initializeEmpty: function(size, usage)
+        initializeEmpty : function (size, usage)
         {
-            if(this.initialized)
+            if (this.initialized)
             {
                 throw new Exception("VBO already initialized");
             }
@@ -45,20 +47,22 @@
             this.initialized = true;
         },
 
-        bind: function() {
+        bind : function ()
+        {
             this.gl.bindBuffer(this.gl.ARRAY_BUFFER, this.handle);
         },
 
-        unbind: function()
+        unbind : function ()
         {
             this.gl.bindBuffer(this.gl.ARRAY_BUFFER, null);
         },
 
-        destroy: function() {
+        destroy : function ()
+        {
             this.gl.deleteBuffer(this.handle);
         },
 
-        bufferSubData: function(offset, data)
+        bufferSubData : function (offset, data)
         {
             this.gl.bufferSubData(this.gl.ARRAY_BUFFER, offset, new Float32Array(data))
         }

@@ -1,6 +1,8 @@
-(function(window) {
+(function (window)
+{
 
-    var DataTypeUtil = function( ) {
+    var DataTypeUtil = function ()
+    {
 
     };
 

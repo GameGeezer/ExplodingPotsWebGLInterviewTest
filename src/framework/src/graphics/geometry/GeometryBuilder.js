@@ -1,23 +1,24 @@
-(function(window) {
+(function (window)
+{
     'use strict';
 
     /**
      *
      * @constructor
      */
-    var GeometryBuilder = function()
+    var GeometryBuilder = function ()
     {
         this.reset();
     };
 
     GeometryBuilder.prototype = {
 
-        constructor: GeometryBuilder,
+        constructor : GeometryBuilder,
 
-        build: function()
+        build : function ()
         {
             //  If there are no components then there is no geometry
-            if(this.componentIds.length === 0)
+            if (this.componentIds.length === 0)
             {
                 return [];
             }
@@ -29,26 +30,26 @@
             //  Stores the offset traveled into the component
             var offsetsIntoComponents = [];
 
-            for(var id in this.componentIds)
+            for (var id in this.componentIds)
             {
                 offsetsIntoComponents[id] = 0;
             }
-            
+
             //  The component data will be interleaved and stored in this array
             var geometry = new Geometry();
 
             //  For each element
-            for(var i = 0; i < numberOfElementsInComponent; ++i)
+            for (var i = 0; i < numberOfElementsInComponent; ++i)
             {
                 //  Loop through each component
-                for(var id in this.componentIds)
+                for (var id in this.componentIds)
                 {
                     //  And add the individual elements to the array (which will be float values)
-                    for(var j = 0; j < this.componentSizeMap[id]; ++j)
+                    for (var j = 0; j < this.componentSizeMap[id]; ++j)
                     {
                         geometry.addVertexData(this.componentElementMap[id][offsetsIntoComponents[id] + j]);
                     }
-                    
+
                     //  Increment the offset traveled into the component by its size
                     offsetsIntoComponents[id] += this.componentSizeMap[id];
                 }
@@ -59,15 +60,15 @@
             return geometry;
         },
 
-        validate: function()
+        validate : function ()
         {
             var elementsToExpect = undefined;
 
-            for(var id in this.componentIds)
+            for (var id in this.componentIds)
             {
                 //  If a component's count is not divisible by the element's size
                 //  then the mesh is invalid
-                if(this.componentElementMap[id].length % this.componentSizeMap[id] != 0)
+                if (this.componentElementMap[id].length % this.componentSizeMap[id] != 0)
                 {
                     return false;
                 }
@@ -76,7 +77,7 @@
 
                 //  The first time passing through this loop elementsToExpect will be undefined
                 //  and it only needs to be set once.
-                if(elementsToExpect === undefined)
+                if (elementsToExpect === undefined)
                 {
                     elementsToExpect = numberOfElementsInComponent;
 
@@ -84,7 +85,7 @@
                 }
 
                 //  If two components do not contain the same number of elements then the mesh is invalid
-                if(elementsToExpect !== numberOfElementsInComponent)
+                if (elementsToExpect !== numberOfElementsInComponent)
                 {
                     return false;
                 }
@@ -93,7 +94,7 @@
             return true;
         },
 
-        createComponent: function(componentId, size)
+        createComponent : function (componentId, size)
         {
             //  Store the component id
             this.componentIds.push(componentId);
@@ -105,17 +106,17 @@
             this.componentElementMap[componentId] = [];
         },
 
-        setDataAtComponent: function(componentId, data)
+        setDataAtComponent : function (componentId, data)
         {
             this.componentElementMap[componentId] = data;
         },
 
-        setIndices: function(indices)
+        setIndices : function (indices)
         {
             this.indices = indices;
         },
 
-        reset: function()
+        reset : function ()
         {
             this.componentIds = [];
 

@@ -1,22 +1,23 @@
-(function(window) {
+(function (window)
+{
     'use strict';
 
-    var ShaderProgram = function(gl, vertexShaderSource, fragmentShaderSource)
+    var ShaderProgram = function (gl, vertexShaderSource, fragmentShaderSource)
     {
         this.gl = gl;
-        
+
         this.shaderProgram = this.gl.createProgram();
-        
+
         //  Compile the shaders
         var vertexShader = this.loadShader(vertexShaderSource, this.gl.VERTEX_SHADER);
-        
+
         var fragmentShader = this.loadShader(fragmentShaderSource, this.gl.FRAGMENT_SHADER);
 
         //  Attach the shaders to the program
-        this.gl.attachShader(this.shaderProgram , vertexShader);
-        
-        this.gl.attachShader(this.shaderProgram , fragmentShader);
-        
+        this.gl.attachShader(this.shaderProgram, vertexShader);
+
+        this.gl.attachShader(this.shaderProgram, fragmentShader);
+
         this.gl.linkProgram(this.shaderProgram);
 
         //  Throw an exception if the program fails to link
@@ -28,28 +29,28 @@
 
     ShaderProgram.prototype = {
 
-        constructor: ShaderProgram,
+        constructor : ShaderProgram,
 
-        bind: function()
+        bind : function ()
         {
             this.gl.useProgram(this.shaderProgram);
         },
 
-        getUniformLocation: function(uniformName)
+        getUniformLocation : function (uniformName)
         {
-            return this.gl.getUniformLocation(this.shaderProgram , uniformName);
+            return this.gl.getUniformLocation(this.shaderProgram, uniformName);
         },
 
-        getAttributeLocation: function(attributeName)
+        getAttributeLocation : function (attributeName)
         {
-            var attributeLocation = this.gl.getAttribLocation(this.shaderProgram , attributeName);
+            var attributeLocation = this.gl.getAttribLocation(this.shaderProgram, attributeName);
 
             this.gl.enableVertexAttribArray(attributeLocation);
 
             return attributeLocation;
         },
 
-        loadShader: function(shaderSource, shaderType)
+        loadShader : function (shaderSource, shaderType)
         {
             //  Create shader of type, i.e vertex, fragment
             var shader = this.gl.createShader(shaderType);
@@ -73,51 +74,3 @@
     window.ShaderProgram = ShaderProgram;
 
 })(window);
-
-/*
-
- var ShaderProgram = function(gl, vertexShaderId, fragmentShaderId)
- {
-
- };
-
- ShaderProgram.prototype = {
-
- constructor: ShaderProgram,
-
- bind: function()
- {
-
- },
-
- getUniformLocation: function(uniformName)
- {
-
- },
-
- getAttributeLocation: function(attributeName)
- {
-
- },
-
- loadSourceFromId: function(id)
- {
- var shaderScript = document.getElementById(id);
- if (!shaderScript) {
- return null;
- }
-
- var str = "";
- var k = shaderScript.firstChild;
- while (k) {
- if (k.nodeType == 3)
- str += k.textContent;
- k = k.nextSibling;
- }
-
- return str;
- },
-
-
- };
- */

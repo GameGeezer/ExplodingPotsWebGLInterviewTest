@@ -1,7 +1,9 @@
-(function(window) {
+(function (window)
+{
     'use strict';
 
-    var CollisionRay = function(origin, direction) {
+    var CollisionRay = function (origin, direction)
+    {
 
         this.origin = origin;
         this.direction = direction;
@@ -9,9 +11,10 @@
 
     CollisionRay.prototype = {
 
-        constructor: CollisionRay,
+        constructor : CollisionRay,
 
-        intersectsSphere: function (sphere) {
+        intersectsSphere : function (sphere)
+        {
 
 
         }

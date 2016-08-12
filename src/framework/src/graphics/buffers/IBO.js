@@ -1,4 +1,5 @@
-(function(window) {
+(function (window)
+{
     'use strict';
 
     /**
@@ -8,7 +9,7 @@
      * @param glElementSize
      * @constructor
      */
-    var IBO = function(gl, glElementSize)
+    var IBO = function (gl, glElementSize)
     {
         this.gl = gl;
 
@@ -16,7 +17,7 @@
 
         this.initialized = false;
 
-        switch(glElementSize)
+        switch (glElementSize)
         {
             case this.gl.UNSIGNED_SHORT:
 
@@ -46,11 +47,11 @@
 
     IBO.prototype = {
 
-        constructor: IBO,
+        constructor : IBO,
 
-        initializeBuffer: function(indices, usage)
+        initializeBuffer : function (indices, usage)
         {
-            if(this.initialized)
+            if (this.initialized)
             {
                 throw new Exception("IBO already initialized");
             }
@@ -60,9 +61,9 @@
             this.initialized = true;
         },
 
-        initializeEmpty: function(size, usage)
+        initializeEmpty : function (size, usage)
         {
-            if(this.initialized)
+            if (this.initialized)
             {
                 throw new Exception("IBO already initialized");
             }
@@ -72,22 +73,22 @@
             this.initialized = true;
         },
 
-        bind: function()
+        bind : function ()
         {
             this.gl.bindBuffer(this.gl.ELEMENT_ARRAY_BUFFER, this.handle);
         },
 
-        unbind: function()
+        unbind : function ()
         {
             this.gl.bindBuffer(this.gl.ELEMENT_ARRAY_BUFFER, null);
         },
 
-        destroy: function()
+        destroy : function ()
         {
             this.gl.deleteBuffer(this.handle);
         },
 
-        bufferSubData: function(offset, data)
+        bufferSubData : function (offset, data)
         {
             this.gl.bufferSubData(this.gl.ELEMENT_ARRAY_BUFFER, offset, this.createDataArrayFunction(data))
         }
@@ -98,7 +99,7 @@
         return new Uint16Array(indices)
     };
 
-    var createDataArray32 = function(indices)
+    var createDataArray32 = function (indices)
     {
         return new Uint32Array(indices)
     };

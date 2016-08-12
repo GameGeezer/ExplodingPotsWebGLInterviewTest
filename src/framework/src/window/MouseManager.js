@@ -1,7 +1,8 @@
-(function(window) {
+(function (window)
+{
     'use strict';
 
-    var MouseButton = function()
+    var MouseButton = function ()
     {
         this.isPressed = false;
 
@@ -14,9 +15,9 @@
 
     MouseButton.prototype = {
 
-        constructor: MouseButton,
+        constructor : MouseButton,
 
-        press: function(event)
+        press : function (event)
         {
             this.isPressed = true;
 
@@ -27,7 +28,7 @@
             this.pressedY = event.screenY;
         },
 
-        release: function(event)
+        release : function (event)
         {
             this.isPressed = false;
 
@@ -41,7 +42,7 @@
 
     window.MouseButton = MouseButton;
 
-    var MouseManager = function()
+    var MouseManager = function ()
     {
 
     };
@@ -68,31 +69,31 @@
 
     MouseManager.RIGHT_WIN_BUTTON = 2;
 
-    MouseManager.onMouseDown = function(event)
+    MouseManager.onMouseDown = function (event)
     {
-        if(event.button === MouseManager.LEFT_STD_BUTTON)
+        if (event.button === MouseManager.LEFT_STD_BUTTON)
         {
             MouseManager.leftButton.press(event);
         }
-        else if(event.button === MouseManager.RIGHT_STD_BUTTON)
+        else if (event.button === MouseManager.RIGHT_STD_BUTTON)
         {
             MouseManager.rightButton.press(event);
         }
     };
 
-    MouseManager.onMouseUp = function(event)
+    MouseManager.onMouseUp = function (event)
     {
-        if(event.button === MouseManager.LEFT_STD_BUTTON)
+        if (event.button === MouseManager.LEFT_STD_BUTTON)
         {
             MouseManager.leftButton.release(event);
         }
-        else if(event.button === MouseManager.RIGHT_STD_BUTTON)
+        else if (event.button === MouseManager.RIGHT_STD_BUTTON)
         {
             MouseManager.rightButton.release(event);
         }
     };
 
-    MouseManager.onMouseMove = function(event)
+    MouseManager.onMouseMove = function (event)
     {
         MouseManager.currentX = event.screenX;
 

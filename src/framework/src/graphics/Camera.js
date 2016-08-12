@@ -1,7 +1,8 @@
-(function(window) {
+(function (window)
+{
     'use strict';
 
-    var Camera = function()
+    var Camera = function ()
     {
         this.view = mat4.create();
 
@@ -20,13 +21,13 @@
 
     Camera.prototype = {
 
-        constructor: Camera,
+        constructor : Camera,
 
         /**
          *
          * @param amount
          */
-        moveForward: function(amount)
+        moveForward : function (amount)
         {
             vec3.mul(this.dummyVec3, this.direction, [amount, amount, amount]);
 
@@ -39,7 +40,7 @@
          *
          * @param amount
          */
-        moveUp: function(amount)
+        moveUp : function (amount)
         {
             vec3.mul(this.dummyVec3, [0, -1, 0], [amount, amount, amount]);
 
@@ -52,7 +53,7 @@
          *
          * @param amount
          */
-        moveDown: function(amount)
+        moveDown : function (amount)
         {
             vec3.mul(this.dummyVec3, [0, -1, 0], [amount, amount, amount]);
 
@@ -65,7 +66,7 @@
          *
          * @param amount
          */
-        moveBackward: function(amount)
+        moveBackward : function (amount)
         {
             vec3.mul(this.dummyVec3, this.direction, [amount, amount, amount]);
 
@@ -78,7 +79,7 @@
          *
          * @param amount
          */
-        moveLeft: function(amount)
+        moveLeft : function (amount)
         {
             vec3.cross(this.dummyVec3, this.direction, [0, 1, 0]);
 
@@ -93,7 +94,7 @@
          *
          * @param amount
          */
-        moveRight: function(amount)
+        moveRight : function (amount)
         {
             vec3.cross(this.dummyVec3, this.direction, [0, 1, 0]);
 
@@ -108,7 +109,7 @@
          *
          * @param amount
          */
-        rotateLocalX: function(amount)
+        rotateLocalX : function (amount)
         {
             vec3.rotateX(this.direction, this.direction, [0, 1, 0], amount)
         },
@@ -117,7 +118,7 @@
          *
          * @param amount
          */
-        rotateLocalY: function(amount)
+        rotateLocalY : function (amount)
         {
             vec3.rotateY(this.direction, this.direction, [0, 1, 0], amount)
         },
@@ -126,7 +127,8 @@
          *
          * @param amount
          */
-        rotateLocalZ: function(amount) {
+        rotateLocalZ : function (amount)
+        {
             vec3.rotateZ(this.direction, this.direction, [0, 1, 0], amount)
         }
     };
@@ -135,9 +137,10 @@
      *
      * @param camera
      */
-    function updateViewMatrix(camera) {
+    function updateViewMatrix(camera)
+    {
 
-        mat4.lookAt(camera.view, camera.direction, [0,0,0], [0,1,0]);
+        mat4.lookAt(camera.view, camera.direction, [0, 0, 0], [0, 1, 0]);
         mat4.translate(camera.view, camera.view, camera.position);
     }
 
