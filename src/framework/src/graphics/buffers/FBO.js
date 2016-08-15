@@ -13,6 +13,8 @@
         this.handle.width = width;
 
         this.handle.height = height;
+
+        this.unbind();
     };
 
     FBO.prototype = {

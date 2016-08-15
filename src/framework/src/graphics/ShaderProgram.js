@@ -36,6 +36,11 @@
             this.gl.useProgram(this.shaderProgram);
         },
 
+        unbind : function ()
+        {
+            this.gl.useProgram(null);
+        },
+
         getUniformLocation : function (uniformName)
         {
             return this.gl.getUniformLocation(this.shaderProgram, uniformName);

@@ -2,12 +2,11 @@
 {
     'use strict';
 
-    var SceneObject = function (gl, mesh, material, modelMatrixUniform)
+    var SceneObject = function (gl, mesh, material)
     {
         this.gl = gl;
         this.mesh = mesh;
         this.material = material;
-        this.modelMatrixUniform = modelMatrixUniform;
 
         this.translation = vec3.create();
         this.scale = vec3.create();
@@ -23,7 +22,7 @@
 
         render : function ()
         {
-            this.gl.uniformMatrix4fv(this.modelMatrixUniform, false, this.modelMatrix);
+            this.gl.uniformMatrix4fv(this.material.modelMatrixUniform, false, this.modelMatrix);
 
             this.mesh.render();
         },

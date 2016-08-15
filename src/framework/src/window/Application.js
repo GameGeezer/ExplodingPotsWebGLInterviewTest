@@ -19,6 +19,8 @@
 
         this.gl.getExtension('OES_element_index_uint');
 
+        window.drawBuffersExt = this.gl.getExtension('WEBGL_draw_buffers');
+        
         this.gl.viewportWidth = canvas.width;
         this.gl.viewportHeight = canvas.height;
 

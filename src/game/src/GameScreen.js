@@ -19,7 +19,11 @@
         var vertexShaderSource = window.loadedShaders["BasicVert"];
 
         var fragmentShaderSource = window.loadedShaders["BasicFrag"];
+        
+        var fragmentDeferredPassSource = window.loadedShaders["DeferredMeshPassFrag"];
 
+        this.deferredMeshPassProgram = new ShaderProgram(this.gl, vertexShaderSource, fragmentDeferredPassSource);
+        
         this.shaderProgram1 = new ShaderProgram(this.gl, vertexShaderSource, fragmentShaderSource);
         this.usingShaderProgram = this.shaderProgram1;
         
@@ -101,49 +105,28 @@
         this.testMeshFamily.createFamily();
         
         this.testMeshFamily.bind();
-        this.usingShaderProgram.bind();
 
-        this.modelMatrixUniform = this.usingShaderProgram.getUniformLocation("uModelMatrix");
-        this.projectionMatrixUniform = this.usingShaderProgram.getUniformLocation("uProjectionMatrix");
-        this.viewMatrixUniform = this.usingShaderProgram.getUniformLocation("uViewMatrix");
+        this.renderer = new Renderer(this.gl, this.quadMesh, this.usingShaderProgram);
 
         mat4.perspective(this.projectionMatrix, 45, this.gl.viewportWidth / this.gl.viewportHeight, 0.1, 100.0);
-        this.gl.uniformMatrix4fv(this.projectionMatrixUniform, false, this.projectionMatrix);
 
-        this.gl.activeTexture(this.gl.TEXTURE0);
-        window.textures.bind();
-        this.gl.uniform1i(this.gl.getUniformLocation(this.usingShaderProgram.handle, "uSampler"), 0);
+
         
         this.testScene = new Scene();
 
-        this.testMaterial = new Material();
+        this.testMaterial = new Material(this.gl, this.deferredMeshPassProgram, window.textures, "uModelMatrix", "uProjectionMatrix", "uViewMatrix", "uSampler");
 
-        this.testSceneObject = new SceneObject(this.gl, this.teapotList[0], this.testMaterial, this.modelMatrixUniform);
+        this.testSceneObject = new SceneObject(this.gl, this.teapotList[0], this.testMaterial);
         this.testSceneObject.setScale(0.01, 0.01, 0.01);
         this.testSceneObject.translateBy(-2, 0, -7);
 
-        this.testSceneObject2 = new SceneObject(this.gl, this.quadMesh, this.testMaterial, this.modelMatrixUniform);
+        this.testSceneObject2 = new SceneObject(this.gl, this.quadMesh, this.testMaterial);
         //this.testSceneObject2.setScale(0.01, 0.01, 0.01);
         this.testSceneObject2.translateBy(2, 0, -7);
 
         this.testScene.addSceneObject(this.testSceneObject);
         this.testScene.addSceneObject(this.testSceneObject2);
 
-
-        this.fbo = new FBO(this.gl, 1024, 1024);
-        this.fbo.unbind();
-        this.rbo = new RBO(this.gl, 1024, 1024);
-        this.colorTexture = new Texture2D(this.gl);
-        this.colorTexture.initializeFromDimensions(this.gl.RGBA, this.gl.UNSIGNED_BYTE, 1024, 1024);
-
-        this.colorTexture.bind();
-        this.rbo.bind();
-        this.fbo.bind();
-        this.fbo.attach(this.colorTexture.handle, this.rbo.handle);
-
-        this.colorTexture.unbind();
-        this.rbo.unbind();
-        this.fbo.unbind();
 
     };
 
@@ -153,42 +136,8 @@
     };
 
     GameScreen.prototype.onRender = function(delta) {
-
-        this.fbo.bind();
-        window.textures.bind();
-        this.gl.uniformMatrix4fv(this.viewMatrixUniform, false, this.player.getView());
-
-        var tm = mat4.create();
-
-        this.testScene.render();
-
-        this.fbo.unbind();
-
-        this.gl.viewport(0, 0, this.gl.viewportWidth, this.gl.viewportHeight);
-        this.gl.clear(this.gl.COLOR_BUFFER_BIT | this.gl.DEPTH_BUFFER_BIT);
-        //Delete eventually
-
-        var teapotCount = $('#numberOfTeapots').val();
-        var teapotRes = $('#teapotResolution').val();
-    //    this.teapotResolutions[teapotRes].bind(this.gl);
-        for(var i = 0; i < teapotCount; ++i)
-        {
-            var x = i % 7;
-            var y = Math.floor(i / 7)
-            mat4.identity(tm);
-            mat4.translate(tm, tm, [-5 + 1.5 * x, -5 + (1.5 * y), -10.0]);
-            mat4.scale(tm, tm, [0.01, 0.01, 0.01]);
-            this.gl.uniformMatrix4fv(this.modelMatrixUniform, false, tm);
-            this.teapotList[teapotRes].render(this.gl)
-          //  this.teapotResolutions[teapotRes].setTranslation(-5 + 1.5 * x, -5 + (1.5 * y), -10.0);
-           // this.teapotResolutions[teapotRes].render(this.gl);
-        }
-
-
-        this.gl.activeTexture(this.gl.TEXTURE0);
-        this.colorTexture.bind();
-        this.gl.uniform1i(this.gl.getUniformLocation(this.usingShaderProgram.handle, "uSampler"), 0);
-        this.testSceneObject2.render();
+        
+        this.renderer.render(this.testScene, this.player.getView(), this.projectionMatrix);
     };
 
     GameScreen.prototype.onPause = function( ) {
@@ -204,5 +153,6 @@
     };
 
     window.GameScreen = GameScreen;
+    
 })(window);
 

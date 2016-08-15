@@ -1,3 +1,5 @@
+  #extension GL_EXT_draw_buffers : require
+
   precision mediump float;
   varying vec4 pass_color;
   varying vec3 pass_normal;
@@ -17,5 +19,6 @@
 
     vec3 color = (texture2D(uSampler, vec2(vTextureCoord.s, vTextureCoord.t)).xyz * lightWeighting) + ambientColor;
 
-    gl_FragColor = vec4(color, 1.0);
+    gl_FragData[0] = vec4(color, 1.0);
+    gl_FragData[1] = vec4(color, 1.0);
   }

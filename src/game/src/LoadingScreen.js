@@ -92,6 +92,7 @@
             'BasicFrag' : 'res/shaders/BasicShader.frag',
             'BasicTexturedVert' : 'res/shaders/BasicTextured.vert',
             'BasicTexturedFrag' : 'res/shaders/BasicTextured.frag',
+            'DeferredMeshPassFrag' : 'res/shaders/DeferredMeshPass.frag',
         }, function (shaders)
         {
             window.loadedShaders = shaders;

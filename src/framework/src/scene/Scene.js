@@ -17,7 +17,7 @@
 
         constructor : Scene,
         
-        render : function ()
+        render : function (view, projection)
         {
             for(var familyId in this.meshFamilies)
             {
@@ -32,6 +32,8 @@
 
                 for(var materialId in familyDividedByMaterial)
                 {
+                    this.materials[materialId].use(view, projection);
+
                     for(var meshId in familyDividedByMaterial[materialId])
                     {
                         familyDividedByMaterial[materialId][meshId].render();
