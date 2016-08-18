@@ -34,7 +34,9 @@
 
     LoadingScreen.prototype.onRender = function (delta)
     {
+        this.gl.viewport(0, 0, this.gl.viewportWidth, this.gl.viewportHeight);
 
+        this.gl.clear(this.gl.COLOR_BUFFER_BIT | this.gl.DEPTH_BUFFER_BIT);
 
     };
 
@@ -59,11 +61,8 @@
         OBJ.downloadMeshes({
             'cubeObj' : 'res/models/cube.obj',
             'teapot1' : 'res/models/MeshRes1.obj',
-            'teapot2' : 'res/models/MeshRes2.obj',
-            'teapot3' : 'res/models/MeshRes3.obj',
-            'teapot4' : 'res/models/MeshRes4.obj',
-            'teapot5' : 'res/models/MeshRes5.obj',
             'Quad' : 'res/models/Quad.obj',
+            'Sibenik' : 'res/models/sibenik/sibenik.obj',
         }, function (meshes)
         {
             window.loadedMeshes = meshes;
@@ -92,7 +91,8 @@
             'BasicFrag' : 'res/shaders/BasicShader.frag',
             'BasicTexturedVert' : 'res/shaders/BasicTextured.vert',
             'BasicTexturedFrag' : 'res/shaders/BasicTextured.frag',
-            'DeferredMeshPassFrag' : 'res/shaders/DeferredMeshPass.frag',
+            'MeshPassVert' : 'res/shaders/MeshPass.vert',
+            'MeshPassFrag' : 'res/shaders/MeshPass.frag',
         }, function (shaders)
         {
             window.loadedShaders = shaders;

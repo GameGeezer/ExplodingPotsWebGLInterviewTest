@@ -13,17 +13,17 @@
 
         update: function() {
 
-            if (KeyboardManager.isKeyPressed(KeyboardManager.KEY_CODE_W))
+            if (this.wPresed)
                 this.camera.moveForward(0.04);
-            if (KeyboardManager.isKeyPressed(KeyboardManager.KEY_CODE_A))
+            if (this.aPresed)
                 this.camera.moveLeft(0.04);
-            if (KeyboardManager.isKeyPressed(KeyboardManager.KEY_CODE_S))
+            if (this.sPresed)
                 this.camera.moveBackward(0.04);
-            if (KeyboardManager.isKeyPressed(KeyboardManager.KEY_CODE_D))
+            if (this.dPresed)
                 this.camera.moveRight(0.04);
-            if (KeyboardManager.isKeyPressed(KeyboardManager.KEY_CODE_Q))
+            if (this.qPresed)
                 this.camera.moveUp(0.04);
-            if (KeyboardManager.isKeyPressed(KeyboardManager.KEY_CODE_E))
+            if (this.ePresed)
                 this.camera.moveDown(0.04);
 
             if(MouseManager.leftButton.isPressed) {
@@ -32,6 +32,39 @@
                 //this.lastMousePosition = [MouseManager.leftButton.pressedX, MouseManager.leftButton.pressedY];
             }
         },
+
+        onKeyDown : function(keyCode)
+        {
+            if (keyCode == Keyboard.KEY_CODE_W)
+                this.wPresed = true;
+            if (keyCode == Keyboard.KEY_CODE_A)
+                this.aPresed = true;
+            if (keyCode == Keyboard.KEY_CODE_S)
+                this.sPresed = true;
+            if (keyCode == Keyboard.KEY_CODE_D)
+                this.dPresed = true;
+            if (keyCode == Keyboard.KEY_CODE_Q)
+                this.qPresed = true;
+            if (keyCode == Keyboard.KEY_CODE_E)
+                this.ePresed = true;
+        },
+
+        onKeyUp : function(keyCode)
+        {
+            if (keyCode == Keyboard.KEY_CODE_W)
+                this.wPresed = false;
+            if (keyCode == Keyboard.KEY_CODE_A)
+                this.aPresed = false;
+            if (keyCode == Keyboard.KEY_CODE_S)
+                this.sPresed = false;
+            if (keyCode == Keyboard.KEY_CODE_D)
+                this.dPresed = false;
+            if (keyCode == Keyboard.KEY_CODE_Q)
+                this.qPresed = false;
+            if (keyCode == Keyboard.KEY_CODE_E)
+                this.ePresed = false;
+        },
+
         getView: function() {
             return this.camera.view;
         }

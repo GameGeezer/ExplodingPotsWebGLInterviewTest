@@ -2,45 +2,26 @@
 {
     'use strict';
 
-    var Application = function (game, width, height, canvas)
+    var Application = function (game, canvas)
     {
         this.isAlive = true;
 
-        this.previousTime = Date.now();
-
-        // Initialize WebGL
-        this.gl = canvas.getContext("webgl") || canvas.getContext("experimental-webgl");
-
-        // Assert that the context has been created
-        if (!this.gl)
-        {
-            throw new Exception("Unable to initialize WebGL. Your browser may not support it.");
-        }
-
-        this.gl.getExtension('OES_element_index_uint');
-
-        window.drawBuffersExt = this.gl.getExtension('WEBGL_draw_buffers');
+        this.gl = initWebGL(canvas);
         
-        this.gl.viewportWidth = canvas.width;
-        this.gl.viewportHeight = canvas.height;
-
-        // Set clear color to black, fully opaque
-        this.gl.clearColor(0.0, 0.0, 0.0, 1.0);
-        // Enable depth testing
-        this.gl.enable(this.gl.DEPTH_TEST);
-        // Near things obscure far things
-        this.gl.depthFunc(this.gl.LEQUAL);
+        this.keyboard = initKeyInput();
 
         this.game = game;
-
         this.game.application = this;
-
         this.game.create();
 
+        //  Prevent the first frame delta from being massive
+        this.previousTime = Date.now();
+
+        //  Used to gauge efficiency and memory usage
         this.stats = new Stats();
 
-
         this.stats.showPanel(1);
+
         document.body.appendChild(this.stats.dom);
     };
 
@@ -51,11 +32,6 @@
         performGameLoop : function ()
         {
             this.stats.begin();
-
-            this.gl.viewport(0, 0, this.gl.viewportWidth, this.gl.viewportHeight);
-
-            //  Clear the color and depth buffers
-            this.gl.clear(this.gl.COLOR_BUFFER_BIT | this.gl.DEPTH_BUFFER_BIT);
 
             //  Grab the current time
             var currentTime = Date.now();
@@ -85,6 +61,51 @@
         {
             this.isAlive = false;
         }
+    };
+
+    var initWebGL = function(canvas)
+    {
+        // Initialize WebGL
+        var gl = canvas.getContext("webgl") || canvas.getContext("experimental-webgl");
+
+        // Assert that the context has been created
+        if (!gl)
+        {
+            throw new Exception("Unable to initialize WebGL. Your browser may not support it.");
+        }
+
+        gl.getExtension('OES_element_index_uint');
+
+        window.drawBuffersExt = gl.getExtension( 'WEBGL_draw_buffers' ) || gl.getExtension( "GL_EXT_draw_buffers" ) || gl.getExtension( "EXT_draw_buffers" );
+
+        gl.viewportWidth = canvas.width;
+        gl.viewportHeight = canvas.height;
+
+        // Set clear color to black, fully opaque
+        gl.clearColor(0.0, 0.0, 0.0, 1.0);
+        // Enable depth testing
+        gl.enable(gl.DEPTH_TEST);
+        // Near things obscure far things
+        gl.depthFunc(gl.LEQUAL);
+
+        return gl;
+    };
+
+    var initKeyInput = function()
+    {
+        var keyboard = new KeyboardCallback();
+        
+        document.addEventListener('keydown', function (event)
+        {
+            keyboard.onKeyDown(event);
+        });
+
+        document.addEventListener('keyup', function (event)
+        {
+            keyboard.onKeyUp(event);
+        });
+        
+        return keyboard;
     };
 
     window.Application = Application;

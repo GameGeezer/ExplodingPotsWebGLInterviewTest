@@ -1,24 +1,20 @@
   #extension GL_EXT_draw_buffers : require
 
   precision mediump float;
-  varying vec4 pass_color;
-  varying vec3 pass_normal;
-  varying vec3 pass_lightDirection;
+
+  varying vec4 vColor;
+  varying vec3 vNormal;
 
   varying highp vec2 vTextureCoord;
+  varying vec3 vPosition;
 
   uniform sampler2D uSampler;
 
   void main(void) {
-    	float lambertCoef = max(dot(pass_normal, pass_lightDirection), 0.0);
 
-    vec3 diffuse      = vec3(0.9, 0.9, 0.9);
-    vec3 ambientColor = vec3(0.4, 0.4, 0.4);
-
-    vec3 lightWeighting = ambientColor + diffuse * lambertCoef;
-
-    vec3 color = (texture2D(uSampler, vec2(vTextureCoord.s, vTextureCoord.t)).xyz * lightWeighting) + ambientColor;
+    vec3 color = (texture2D(uSampler, vec2(vTextureCoord.s, vTextureCoord.t)).xyz);
 
     gl_FragData[0] = vec4(color, 1.0);
-    gl_FragData[1] = vec4(color, 1.0);
+    gl_FragData[1] = vec4(vNormal, 1.0);
+    gl_FragData[2] = vec4(vPosition, 1.0);
   }

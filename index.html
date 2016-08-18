@@ -64,15 +64,7 @@
             MouseManager.onMouseUp(e);
         });
 
-        document.addEventListener('keydown', function (event)
-        {
-            KeyboardManager.onKeyDown(event);
-        });
 
-        document.addEventListener('keyup', function (event)
-        {
-            KeyboardManager.onKeyUp(event);
-        });
     });
 
     function start()
@@ -82,7 +74,7 @@
         var loadingScreen = new LoadingScreen();
         var game = new Game(loadingScreen, 1);
         game.addScreen(gameScreen, 2);
-        var application = new Application(game, 900, 800, canvas);
+        var application = new Application(game, canvas);
         application.performGameLoop();
     }
 </script>

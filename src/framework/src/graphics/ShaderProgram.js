@@ -9,9 +9,9 @@
         this.shaderProgram = this.gl.createProgram();
 
         //  Compile the shaders
-        var vertexShader = this.loadShader(vertexShaderSource, this.gl.VERTEX_SHADER);
+        var vertexShader = loadShader(this.gl, vertexShaderSource, this.gl.VERTEX_SHADER);
 
-        var fragmentShader = this.loadShader(fragmentShaderSource, this.gl.FRAGMENT_SHADER);
+        var fragmentShader = loadShader(this.gl, fragmentShaderSource, this.gl.FRAGMENT_SHADER);
 
         //  Attach the shaders to the program
         this.gl.attachShader(this.shaderProgram, vertexShader);
@@ -53,28 +53,28 @@
             this.gl.enableVertexAttribArray(attributeLocation);
 
             return attributeLocation;
-        },
-
-        loadShader : function (shaderSource, shaderType)
-        {
-            //  Create shader of type, i.e vertex, fragment
-            var shader = this.gl.createShader(shaderType);
-
-            //  Link the source code for the shader
-            this.gl.shaderSource(shader, shaderSource);
-
-            //  Compile the linked source
-            this.gl.compileShader(shader);
-
-            //  Throw an exception if the shader fails to compile
-            if (!this.gl.getShaderParameter(shader, this.gl.COMPILE_STATUS))
-            {
-                throw new Exception(this.gl.getShaderInfoLog(shader));
-            }
-
-            return shader;
         }
     };
+
+    var loadShader = function(gl, shaderSource, shaderType)
+    {
+        //  Create shader of type, i.e vertex, fragment
+        var shader = gl.createShader(shaderType);
+
+        //  Link the source code for the shader
+        gl.shaderSource(shader, shaderSource);
+
+        //  Compile the linked source
+        gl.compileShader(shader);
+
+        //  Throw an exception if the shader fails to compile
+        if (!gl.getShaderParameter(shader, gl.COMPILE_STATUS))
+        {
+            throw new Exception(gl.getShaderInfoLog(shader));
+        }
+
+        return shader;
+    }
 
     window.ShaderProgram = ShaderProgram;
 

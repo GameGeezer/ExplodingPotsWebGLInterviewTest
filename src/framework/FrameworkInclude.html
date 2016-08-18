@@ -1,13 +1,24 @@
 <script src="src/Exceptions.js"></script>
 
+!-- Util -->
+
 <script src="src/util/FileUtil.js"></script>
 <script src="src/util/DataTypeUtil.js"></script>
+<script src="src/util/MathUtil.js"></script>
+
+
+<!-- Window -->
 
 <script src="src/window/Application.js"></script>
 <script src="src/window/Game.js"></script>
 <script src="src/window/Screen.js"></script>
-<script src="src/window/MouseManager.js"></script>
-<script src="src/window/KeyboardManager.js"></script>
+
+<script src="src/window/keyboard/Keyboard.js"></script>
+<script src="src/window/keyboard/KeyboardCallback.js"></script>
+
+<script src="src/window/MouseManager.js"></script> <!--old-->
+
+<!-- Graphics -->
 
 <script src="src/graphics/buffers/IBO.js"></script>
 <script src="src/graphics/buffers/VBO.js"></script>
@@ -22,12 +33,22 @@
 
 <script src="src/graphics/renderer/Renderer.js"></script>
 
+
+<script src="src/graphics/lights/Light.js"></script>
+<script src="src/graphics/lights/PointLight.js"></script>
+
 <script src="src/graphics/TextureLoader.js"></script>
 <script src="src/graphics/ShaderProgram.js"></script>
 <script src="src/graphics/Camera.js"></script>
 <script src="src/graphics/Material.js"></script>
+<script src="src/graphics/Color.js"></script>
+
+<!-- Scene -->
 
 <script src="src/scene/Scene.js"></script>
 <script src="src/scene/SceneObject.js"></script>
 
+<!-- Collision -->
+
 <script src="src/collision/CollisionSphere.js"></script>
+<script src="src/collision/2D/AABB.js"></script>

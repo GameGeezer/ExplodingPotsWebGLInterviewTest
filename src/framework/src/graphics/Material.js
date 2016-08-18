@@ -8,15 +8,15 @@
 
     var uniqueId = 0;
 
-    var Material = function (gl, shader, texture, modelUniformName, projectionUniformName, viewUniformName, samplerUniformName)
+    var Material = function (gl, shader,modelUniformName, projectionUniformName, viewUniformName, samplerUniformName, normalMatrixUniformName)
     {
         this.gl = gl;
 
         this.uniqueId = uniqueId++;
 
-        this.shader = shader;
+        this.textures = [];
 
-        this.texture = texture;
+        this.shader = shader;
 
         this.modelMatrixUniform = this.shader.getUniformLocation(modelUniformName);
 
@@ -25,6 +25,8 @@
         this.viewMatrixUniform = this.shader.getUniformLocation(viewUniformName);
 
         this.samplerUnoform = this.shader.getUniformLocation(samplerUniformName);
+
+        this.normalMatrixUniform = this.shader.getUniformLocation(normalMatrixUniformName);
     };
 
     Material.prototype = {
@@ -35,20 +37,35 @@
         {
             this.shader.bind();
 
-            this.texture.bind();
+            for(var i = 0; i < this.textures.length; ++i)
+            {
+                this.gl.activeTexture(this.gl.TEXTURE0 + i);
+
+                this.textures[i].bind();
+            }
+
+            this.gl.uniform1i(this.samplerUnoform, 0);
 
             this.gl.uniformMatrix4fv(this.viewMatrixUniform, false, view);
 
             this.gl.uniformMatrix4fv(this.projectionMatrixUniform, false, projection);
 
-            this.gl.uniform1i(this.samplerUnoform, 0);
+
         },
 
         unbind : function ()
         {
-            this.texture.unbind();
+            for(var i = 0; i < this.textures.length; ++i)
+            {
+                this.textures[i].unbind();
+            }
 
             this.shader.unbind();
+        },
+
+        addTexture: function(texture)
+        {
+            this.textures.push(texture);
         }
     };
 
